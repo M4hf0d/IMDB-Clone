@@ -1,3 +1,4 @@
+from attr import fields
 from watchlist_app.models import Movie
 from watchlist_app.api.serializers import MovieSerializer
 from rest_framework.response import Response
@@ -6,18 +7,35 @@ from rest_framework import status
 from rest_framework.views import APIView
 from ..models import Movie
 
-fields =["id", "name", "description" ,"active"]
+
+
+fields = [field.name for field in Movie._meta.get_fields()]    
+
+# fields =["id", "name", "description" ,"active"]
+
+
+class ApiOverviewAV(APIView):
+    def get(self,request):
+        api_urls = {
+            'List':'http://127.0.0.1:8000/list/',
+            'Liste Sorted' : 'http://127.0.0.1:8000/list/?order={field to order by}',
+            'Detail View':'http://127.0.0.1:8000/detail/',
+            }
+
+        return Response(api_urls)
+
 
 class MovieListAV(APIView):
     def get(self,request):
-            order = request.query_params["order"]
+        try:
+            order = str(request.query_params["order"])   
             if order in fields : 
-                movies = Movie.objects.all().order_by(order)
-                
-            else :         
-                movies = Movie.objects.all().order_by("id") 
-            serializer = MovieSerializer(movies, many=True) 
-            return Response(serializer.data)                
+                 movies = Movie.objects.all().order_by(order)   
+            serializer = MovieSerializer(movies, many=True)                         
+        except :  
+            movies = Movie.objects.all().order_by("id")  #default
+            serializer = MovieSerializer(movies, many=True)      
+        return Response(serializer.data)                
     def post(self, request):
         serializer = MovieSerializer(data=request.data) 
         if serializer.is_valid():
@@ -28,20 +46,7 @@ class MovieListAV(APIView):
 
 
 
-# class MovieListOrderedAV(APIView):
-#     def get(self,request,order):
-#         if order in fields:
-#             movies = Movie.objects.all().order_by(order)
-#             serializer = MovieSerializer(movies, many=True)  
-#         else:
-#             if len(order) == 0:      
-#                 movies = Movie.objects.all().order_by("id")
-#                 serializer = MovieSerializer(movies, many=True)
-#             else :
-#                 raise ValueError("field not found")      
-    
-#         return Response(serializer.data)
-   
+ 
 
 # @api_view(['GET', 'POST'])
 # def movie_list (request):
