@@ -5,11 +5,36 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
+fields =["id", "name", "description" ,"active"]
+
+class MovieListOrderedAV(APIView):
+    def get(self,request,order):
+        if order in fields:
+            movies = Movie.objects.all().order_by(order)
+            serializer = MovieSerializer(movies, many=True)  
+        else:
+            if len(order) == 0:      
+                movies = Movie.objects.all().order_by("id")
+                serializer = MovieSerializer(movies, many=True)
+            else :
+                raise ValueError("field not found")      
+    
+        return Response(serializer.data)
+        
+                       
+                    
+    def post(self, request):
+        serializer = MovieSerializer(data=request.data) 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else : 
+            return Response(serializer.errors)
 class MovieListAV(APIView):
     def get(self,request):
-        movies = Movie.objects.all().order_by("name")
-        serializer = MovieSerializer(movies, many=True)
-        return Response(serializer.data)
+            movies = Movie.objects.all().order_by('id')
+            serializer = MovieSerializer(movies, many=True)       
+            return Response(serializer.data)                
     def post(self, request):
         serializer = MovieSerializer(data=request.data) 
         if serializer.is_valid():
