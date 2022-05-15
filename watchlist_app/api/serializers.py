@@ -1,33 +1,24 @@
+from attr import fields
 from rest_framework import serializers
 from validator import Validator
-from ..models import Movie
+from ..models import WatchList,StreamPlatform
 
 
-def name_length(value) :
-    if len(value) < 2 :
-        raise serializers.ValidationError("name is too short")
-    return value
-def is_active(value) :
-    if value is False :
-        raise serializers.ValidationError("inactive movie can't be added to database")
-    return value    
 
 
-class MovieSerializer(serializers.ModelSerializer):
+class WatchListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Movie
-        fields = '__all__'
-    def validate_name(self, value): #field validation
-      
-        if len(value) < 2 :
-            raise serializers.ValidationError("name is too short")
-        return value
+        model = WatchList
+        # exclude = ['id']
+        fields = "__all__"
 
-    def validate(self, data): #objects level validation
-    
-        if data['name'] == data['description']:
-            raise serializers.ValidationError("Name and description should be the different")
-        return data    
+
+class StreamPlatformSerializer(serializers.ModelSerializer):
+    watchlist = WatchListSerializer(many=True , read_only=True)
+    class Meta:
+        model = StreamPlatform
+        # exclude = ['id']
+        fields = "__all__"
 
 
     # id= serializers.IntegerField(read_only= True)
@@ -37,7 +28,7 @@ class MovieSerializer(serializers.ModelSerializer):
 
 
     # def create(self,validated_data):
-    #     return Movie.objects.create(**validated_data)
+    #     return WatchList.objects.create(**validated_data)
 
 
     # def update(self,instance,validated_data):
