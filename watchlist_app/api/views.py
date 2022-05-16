@@ -58,32 +58,14 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
 
 
-class WatchListSV(viewsets.ViewSet):
-    def list(self, request):
-        queryset = WatchList.objects.all()
-        serializer = WatchListSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        queryset = WatchList.objects.all()
-        movie = get_object_or_404(queryset, pk=pk)
-        serializer = WatchListSerializer(movie)
-        return Response(serializer.data)
+class WatchListSV(viewsets.ModelViewSet):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
 
 
-class StreamPlatformSV(viewsets.ViewSet):
-    def list(self, request):
-        queryset = StreamPlatform.objects.all()
-        serializer = StreamPlatformSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        queryset = StreamPlatform.objects.all()
-        movie = get_object_or_404(queryset, pk=pk)
-        serializer = StreamPlatformSerializer(movie)
-        return Response(serializer.data)
-
-# class ReviewDetails(mixins.RetrieveModelMixin , generics.GenericAPIView):
+class StreamPlatformSV(viewsets.ModelViewSet):
+    queryset = StreamPlatform.objects.all()
+    serializer_class = StreamPlatformSerializer
 
 #     queryset = Reviews.objects.all()
 #     serializer_class = ReviewSerializer
