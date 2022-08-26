@@ -1,0 +1,5 @@
+attr==0.3.2
+attrs==19.3.0
+Django==3.2.12
+djangorestframework==3.13.1
+djangorestframework_simplejwt==5.1.0
